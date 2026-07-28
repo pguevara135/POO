@@ -24,7 +24,7 @@ class Pessoa(ABC):
     @property
     
     def idade(self):
-        return date.today().year - self._nascimento
+        return f'O aluno {self._nome} tem {date.today().year - self._nascimento} anos'
     
     @idade.setter
     
