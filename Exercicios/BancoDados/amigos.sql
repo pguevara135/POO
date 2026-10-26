@@ -1,0 +1,2 @@
+INSERT INTO amigos(nome, nascimento)
+VALUES ("Claudio Mendonca", '1985-05-10'),("Pedro Silva", '2003-01-24'), ("Silvia Martins", '2008-107-02'), ("Enzo Gabriel", '2025-01-20'), ("Valentina Brito", '2022-03-12')
