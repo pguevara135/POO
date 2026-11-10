@@ -14,6 +14,8 @@ def exibir_menu():
     
 def main():
     
+    #cadastro_em_massa()  # Chama a função para cadastrar os usuários em massa
+    
     if not criar_banco():
         print("Falha ao criar o banco de dados. Encerrando o programa.")
         raise SystemExit
