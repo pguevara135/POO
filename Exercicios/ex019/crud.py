@@ -114,7 +114,70 @@ def listar_usuarios() -> list:
         return False
 
 def atualizar_usuario() -> bool:
-    pass
+    #? Listar usuarios cadastrados
+    print("\nATUALIZAÇÃO DE USUÁRIO")
+    
+    listar_usuarios()
+    
+    #? Perguntar o ID de atualização
+    atualizar_usuario = input("Digite o código do usuário que deseja atualizar: ").strip()
+    if not atualizar_usuario.isdigit():
+        print("Código inválido. Digite um número inteiro.")
+        return False
+    
+    #? Buscar se o nome da pessoa existe
+    vcod = int(atualizar_usuario)
+    
+    try:
+        with sqlite3.connect(caminho_banco) as db:
+            cursor = db.cursor()
+            cursor.execute('SELECT nome, altura FROM pessoas WHERE cod = ?', (vcod,))
+            pessoa = cursor.fetchone()
+            
+            if not pessoa:
+                print(f"[AVISO] Nenhum usuário encontrado com o código {vcod}.")
+                return False
+            
+            vnome, valtura = pessoa
+            print(f"\nUsuário encontrado: {vnome}, Altura: {valtura:.2f} mt")
+            
+        #? Perguntar os novos dados
+
+            novo_dado = input("\nDigite o que deseja atualizar (1 - Nome, 2 - Altura): ").strip()
+            if novo_dado not in ["1", "2"]:
+                print("Opção inválida. Digite 1 para Nome ou 2 para Altura.")
+                return False
+            
+            if novo_dado == "1":
+                novo_nome = input("Digite o novo nome: ").strip()
+                if not novo_nome:
+                    print("Nome não pode ser vazio.")
+                    return False
+                cursor.execute('UPDATE pessoas SET nome = ? WHERE cod = ?', (novo_nome, vcod))
+                print(F"\nUsuário {vnome} atualizado com sucesso para {novo_nome}.")
+                return True
+               
+            else:
+                nova_altura = input("Digite a nova altura: ").strip().replace(",", ".")
+                if not nova_altura:
+                    print("Altura não pode ser vazia.")
+                    return False
+                try:
+                    nova_altura = float(nova_altura)
+                    if nova_altura <= 0.30 or nova_altura >= 3.00:
+                        print("Altura inválida. Digite um valor entre 0.30 e 3.00 metros.")
+                        return False
+                    cursor.execute('UPDATE pessoas SET altura = ? WHERE cod = ?', (nova_altura, vcod))
+                    print(F"\nUsuário {vnome} com altura de {valtura:.2f} mt atualizado com sucesso para altura {nova_altura:.2f} mt.")
+                    # db.commit()
+                    return True
+                except ValueError:
+                    print("[ERRO] Altura inválida. Digite um número.")
+                    return False
+                
+    except sqlite3.Error as e:
+        print(f"Erro ao cadastrar usuario: {e}")
+        return False
 
 def excluir_usuario() -> bool: #! Excluir Pessoas
     #? Listar usuarios cadastrados
@@ -149,11 +212,11 @@ def excluir_usuario() -> bool: #! Excluir Pessoas
             vnome, valtura = pessoa
             print(f"\nUsuário encontrado: {vnome}, Altura: {valtura:.2f} mt")
     
-    #? Perguntar se deseja excluir
+        #? Perguntar se deseja excluir
     
             confirmacao = input("Deseja realmente excluir este usuário? (s/n): ").strip().lower()
             
-    #? Excluir a pessoa do banco de dados
+        #? Excluir a pessoa do banco de dados
     
             if confirmacao != 's':
                 print("Exclusão cancelada.")
@@ -165,9 +228,6 @@ def excluir_usuario() -> bool: #! Excluir Pessoas
     
     except sqlite3.Error as e:
         print(f"Erro ao buscar usuário: {e}")
-    
-    
-    
 
 def buscar_usuario() -> list:
     print("\nBUSCAR USUÁRIO POR NOME")
